@@ -13,7 +13,9 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text('Search'),
-        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {})],
+        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {
+          showSearch(context: context, delegate: DataSearch());
+        })],
       ),
       body: Container(),
     );
@@ -21,15 +23,40 @@ class _HomePageState extends State<HomePage> {
 }
 
 class DataSearch extends SearchDelegate<String> {
+  final List<String> cities = [
+    "Paris",
+    "London",
+    "Bangkok",
+    "Hong Kong",
+    "Dubai",
+    "Singapore",
+    "Rome",
+    "Macau",
+    "Istanbul",
+    "Delhi",
+    "Tokyo",
+    "Antalya",
+    "Osaka",
+    "Los Angeles",
+    "Pattaya"
+  ];
+  final recentCities = [
+    "Tokyo",
+    "Antalya",
+    "Osaka",
+  ];
+
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () {})];
+    return [IconButton(icon: Icon(Icons.clear), onPressed: () {
+    })];
   }
 
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-        icon: AnimatedIcon(icon: AnimatedIcons.menu_arrow, progress: null),
+        icon: AnimatedIcon(
+            icon: AnimatedIcons.menu_arrow, progress: transitionAnimation),
         onPressed: () {});
   }
 
@@ -41,7 +68,12 @@ class DataSearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
-    throw UnimplementedError();
+    final suggestionList = query.isEmpty ? recentCities : cities;
+    return ListView.builder(
+        itemBuilder: (context, index) => ListTile(
+              leading: Icon(Icons.location_city),
+              title: Text(suggestionList[index]),
+            ),
+    itemCount: suggestionList.length,);
   }
 }
