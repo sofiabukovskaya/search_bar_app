@@ -1,3 +1,6 @@
+
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +16,13 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text('Search'),
-        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {
-          showSearch(context: context, delegate: DataSearch());
-        })],
+        actions: [
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                showSearch(context: context, delegate: DataSearch());
+              })
+        ],
       ),
       drawer: Drawer(),
     );
@@ -48,9 +55,13 @@ class DataSearch extends SearchDelegate<String> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () {
-      query = "";
-    })];
+    return [
+      IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            query = "";
+          })
+    ];
   }
 
   @override
@@ -65,18 +76,43 @@ class DataSearch extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    throw UnimplementedError();
+    return Center(
+      child: Container(
+        height: 100,
+        width: 100,
+        child: Card(
+          color: Colors.greenAccent,
+          child: Text(query),
+        ),
+      ),
+    );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestionList = query.isEmpty ? recentCities : cities.where((word) => word.toLowerCase().startsWith(query)).toList();
+    final suggestionList = query.isEmpty
+        ? recentCities
+        : cities.where((word) => word.toLowerCase().startsWith(query)).toList();
     return ListView.builder(
-        itemBuilder: (context, index) => ListTile(
-              leading: Icon(Icons.location_city),
-              title: Text(suggestionList[index]),
-            ),
-    itemCount: suggestionList.length,);
+      itemBuilder: (context, index) => ListTile(
+        onTap: () {
+          showResults(context);
+        },
+        leading: Icon(Icons.location_city),
+        title: RichText(
+            text: TextSpan(
+                text: suggestionList[index].substring(0, query.length),
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+                children: [
+              TextSpan(
+                  text: suggestionList[index].substring(query.length),
+                  style: TextStyle(color: Colors.grey))
+            ])),
+      ),
+      itemCount: suggestionList.length,
+    );
   }
 }
