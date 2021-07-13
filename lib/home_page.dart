@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
           showSearch(context: context, delegate: DataSearch());
         })],
       ),
-      body: Container(),
+      drawer: Drawer(),
     );
   }
 }
@@ -49,6 +49,7 @@ class DataSearch extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [IconButton(icon: Icon(Icons.clear), onPressed: () {
+      query = "";
     })];
   }
 
@@ -57,7 +58,9 @@ class DataSearch extends SearchDelegate<String> {
     return IconButton(
         icon: AnimatedIcon(
             icon: AnimatedIcons.menu_arrow, progress: transitionAnimation),
-        onPressed: () {});
+        onPressed: () {
+          close(context, null);
+        });
   }
 
   @override
@@ -68,7 +71,7 @@ class DataSearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestionList = query.isEmpty ? recentCities : cities;
+    final suggestionList = query.isEmpty ? recentCities : cities.where((word) => word.toLowerCase().startsWith(query)).toList();
     return ListView.builder(
         itemBuilder: (context, index) => ListTile(
               leading: Icon(Icons.location_city),
